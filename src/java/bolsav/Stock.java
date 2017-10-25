@@ -33,6 +33,12 @@ public class Stock implements Serializable {
         this.actualPrice = minPrice;
     }
 
+    //construtor para compra
+    public Stock(double maxPrice, String company, int qt) {
+        this.company = company;
+        this.qt = qt;
+        this.maxPrice = maxPrice;
+    }
     /**
      * Retorna a empresa da ação.
      *
