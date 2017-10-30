@@ -15,6 +15,12 @@
     <message name="newStockResponse"/>
     <message name="newStock_sell"/>
     <message name="newStock_sellResponse"/>
+    <message name="getTransactionsSell"/>
+    <message name="getTransactionsSellResponse"/>
+    <message name="getTransactionsBuy"/>
+    <message name="getTransactionsBuyResponse"/>
+    <message name="getStocksClient"/>
+    <message name="getStocksClientResponse"/>
     <portType name="NewWebService">
         <operation name="logout">
             <input message="tns:logout"/>
@@ -36,6 +42,18 @@
             <input message="tns:newStock_sell"/>
             <output message="tns:newStock_sellResponse"/>
         </operation>
+        <operation name="getTransactionsSell">
+            <input message="tns:getTransactionsSell"/>
+            <output message="tns:getTransactionsSellResponse"/>
+        </operation>
+        <operation name="getTransactionsBuy">
+            <input message="tns:getTransactionsBuy"/>
+            <output message="tns:getTransactionsBuyResponse"/>
+        </operation>
+        <operation name="getStocksClient">
+            <input message="tns:getStocksClient"/>
+            <output message="tns:getStocksClientResponse"/>
+        </operation>
     </portType>
     <binding name="NewWebServicePortBinding" type="tns:NewWebService">
         <wsp:PolicyReference URI="#NewWebServicePortBindingPolicy"/>
@@ -56,6 +74,18 @@
             <output/>
         </operation>
         <operation name="newStock_sell">
+            <input/>
+            <output/>
+        </operation>
+        <operation name="getTransactionsSell">
+            <input/>
+            <output/>
+        </operation>
+        <operation name="getTransactionsBuy">
+            <input/>
+            <output/>
+        </operation>
+        <operation name="getStocksClient">
             <input/>
             <output/>
         </operation>
@@ -163,6 +193,30 @@
                 </sp:EncryptedParts>
                 <sp:SignedParts>
                     <sp:Body/>
+                    <sp:Body/>
+                </sp:SignedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="NewWebServicePortBinding_getTransactions_Input_Policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:EncryptedParts>
+                    <sp:Body/>
+                </sp:EncryptedParts>
+                <sp:SignedParts>
+                    <sp:Body/>
+                </sp:SignedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="NewWebServicePortBinding_getTransactions_Output_Policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:EncryptedParts>
+                    <sp:Body/>
+                </sp:EncryptedParts>
+                <sp:SignedParts>
                     <sp:Body/>
                 </sp:SignedParts>
             </wsp:All>

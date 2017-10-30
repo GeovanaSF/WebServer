@@ -15,9 +15,10 @@ public class Stock implements Serializable {
     public String company;      //empresa
     public int qt;              //quantidade disponível
     public double minPrice;     //preço mínimo de venda
-    public boolean available;   //disponibilidade no marcado
     public double actualPrice;  //preço que é alterado pelo servidor
     public double maxPrice;     //preço máximo de compra
+    public Integer qntd;
+    public double transactionPrice;
     /**
      * Construtor da classe, seta qual a empresa a ação pertence, o preço mínino
      * de venda e a quantidade disponível.
@@ -29,6 +30,7 @@ public class Stock implements Serializable {
     public Stock(String company, int qt, double minPrice) {
         this.company = company;
         this.qt = qt;
+        this.qntd = qt;
         this.minPrice = minPrice;
         this.actualPrice = minPrice;
     }
@@ -37,6 +39,7 @@ public class Stock implements Serializable {
     public Stock(double maxPrice, String company, int qt) {
         this.company = company;
         this.qt = qt;
+        this.qntd = qt;
         this.maxPrice = maxPrice;
     }
     /**
@@ -73,6 +76,7 @@ public class Stock implements Serializable {
      */
     public void setQt(int qt) {
         this.qt = qt;
+        this.qntd = qt;
     }
 
     /**
@@ -94,25 +98,6 @@ public class Stock implements Serializable {
     }
 
     /**
-     * Retorna se a ação está disponível ou não para venda
-     *
-     * @return do tipo boolean representando a disponibilidade ou não da ação
-     * para venda
-     */
-    public boolean isAvailable() {
-        return available;
-    }
-
-    /**
-     * Armazena se a ação está disponível ou não
-     *
-     * @param available com a disponibilidade da ação (true ou false)
-     */
-    public void setAvailable(boolean available) {
-        this.available = available;
-    }
-
-    /**
      * Retorna o preço atual da ação formatado
      *
      * @return do tipo String com o valor atual da ação formatado
@@ -120,6 +105,10 @@ public class Stock implements Serializable {
     public String getPrice() {
         NumberFormat formatter = new DecimalFormat("#0.00");
         return formatter.format(actualPrice).replace(',', '.');
+    }
+    
+    public String getQntd(){
+        return qntd.toString();
     }
 
     public double getMaxPrice() {
@@ -130,5 +119,25 @@ public class Stock implements Serializable {
         this.maxPrice = maxPrice;
     }
 
+    public double getTransactionPrice() {
+        return transactionPrice;
+    }
+
+    public void setTransactionPrice(double transactionPrice) {
+        this.transactionPrice = transactionPrice;
+    }
+    
+    public String toString2(){
+        return this.getCompany() + " " + this.getMinPrice() + " " + this.getQntd();
+    }
+    
+    public String toString3(){
+        return this.getCompany() + " " + this.getMaxPrice() + " " + this.getQntd();
+    }
+    
+    @Override
+    public String toString(){
+        return this.getCompany() + " " + this.getPrice() + " " + this.getQntd();
+    }
     
 }
