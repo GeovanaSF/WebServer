@@ -39,6 +39,7 @@ public class NewWebService {
      */
     public List<StockCli> sellers = new ArrayList();
 
+    public int idClients = 0;
     /*public NewWebService(){
         TimerTask update = new TimerTask() {
             @Override
@@ -64,7 +65,13 @@ public class NewWebService {
             }
         }
     }
-
+    
+    @WebMethod(operationName = "login")
+    public int login() {
+        idClients++;
+        return idClients;
+    }
+    
     /**
      * Operação de Web service que retorna uma ação de determinada empresa.
      *
@@ -112,7 +119,8 @@ public class NewWebService {
      * relaciona um cliente
      */
     @WebMethod(operationName = "newStock_sell")
-    public String newStock_sell(@WebParam(name = "client") String client, @WebParam(name = "company") String company, @WebParam(name = "qntd") int qntd, @WebParam(name = "minPrice") double minPrice, @WebParam(name = "id") long id) {
+    public String newStock_sell(@WebParam(name = "client") String client, @WebParam(name = "company") String company, 
+            @WebParam(name = "qntd") int qntd, @WebParam(name = "minPrice") double minPrice, @WebParam(name = "id") int id) {
         //verifica se a ação já estava na tabela de vendas, se já estava só atualiza quantidade e o preço mínimo de venda
         Stock stock = new Stock(company, qntd, minPrice);
         for (StockCli sc : sellers) {
@@ -138,7 +146,8 @@ public class NewWebService {
      * Operação de Web service para cadastrar o desejo de venda de algum cliente
      */
     @WebMethod(operationName = "newStock_buy")
-    public String newStock_buy(@WebParam(name = "client") String client, @WebParam(name = "company") String company, @WebParam(name = "qntd") int qntd, @WebParam(name = "maxPrice") double maxPrice, @WebParam(name = "id") long id) {
+    public String newStock_buy(@WebParam(name = "client") String client, @WebParam(name = "company") String company, 
+            @WebParam(name = "qntd") int qntd, @WebParam(name = "maxPrice") double maxPrice, @WebParam(name = "id") int id) {
         //verifica se a ação já estava na tabela de compras, se já estava só atualiza quantidade e o preço máximo de compra
         Stock stock = new Stock(maxPrice, company, qntd);
         for (StockCli sc : buyers) {
@@ -152,6 +161,7 @@ public class NewWebService {
         //é necessário que os preços estejam setados corretamente
         StockCli sc = new StockCli(stock, client, id);
         buyers.add(sc);
+        
         //chama o método que atualiza os preços atuais das ações
         updatePrices();
         //chama o método que verifica se há alguma compatibilidade para compra e venda
@@ -163,7 +173,8 @@ public class NewWebService {
      * Operação de Web service
      */
     @WebMethod(operationName = "newStock")
-    public String newStock(@WebParam(name = "client") String client, @WebParam(name = "company") String company, @WebParam(name = "qntd") int qntd, @WebParam(name = "minPrice") double minPrice, @WebParam(name = "id") long id) {
+    public String newStock(@WebParam(name = "client") String client, @WebParam(name = "company") String company, 
+            @WebParam(name = "qntd") int qntd, @WebParam(name = "minPrice") double minPrice, @WebParam(name = "id") int id) {
         //verifica se a ação e o cliente associada com ela já existe na lista
         //se existe apenas atualiza a quantidade e a disponibilidade de venda
 
@@ -239,9 +250,9 @@ public class NewWebService {
         Stock sLocal = null;
         for (StockCli b : buyers) {
             for (StockCli s : sellers) {
-                //se a compra e a venda já não foi realizada ele tenta realizar a compra
+                //se a compra não foi realizada ele tenta realizar a compra
 
-                if (!b.statusSell && !s.statusSell) {
+                if (!b.statusSell) {
                     //busca a ação desejada da lista local de ações
                     for (Stock sL : stocksLocal) {
                         if (sL.company.equals(b.stock.company)) {
@@ -249,17 +260,19 @@ public class NewWebService {
                         }
                     }
                     if (sLocal != null) {
-                        //se o vendedor não é o comprador, se as empresas batem, se o preço atual é maior que o preço desejado pelo vendedor
+                        //se o vendedor não é o comprador, se as empresas batem, se o preço atual é maior 
+                        //que o preço desejado pelo vendedor
                         //se  preço atual é menor que o desejado pelo comprador
-                        if (!b.client.equals(s.client) && b.stock.company.equals(s.stock.company) && sLocal.actualPrice >= s.stock.minPrice
-                                && sLocal.actualPrice <= b.stock.maxPrice) {
+                        if (!b.client.equals(s.client) && b.stock.company.equals(s.stock.company) && 
+                                sLocal.actualPrice >= s.stock.minPrice && sLocal.actualPrice <= b.stock.maxPrice) {
                             //se a quantide da ação for menor do que a desejada transaciona o quanto ter
                             if (b.stock.qt <= s.stock.qt) {
                                 qtde1 = s.stock.qt;
                             } else {
                                 qtde1 = b.stock.qt;
                             }
-                            //armazena o valor da transação pegando a média entre o valor máximo desejado e o valor que o comprador quer pagar
+                            //armazena o valor da transação pegando a média entre o valor máximo desejado e o valor 
+                            //que o comprador quer pagar
                             b.stock.transactionPrice = (sLocal.actualPrice + b.stock.maxPrice) / 2;
                             s.stock.setTransactionPrice(b.stock.transactionPrice);
                             //atualiza a quantidade que foi transacionada nas listas
@@ -268,6 +281,9 @@ public class NewWebService {
                             //sinaliza que essas ações já foram vendidas ou compradas
                             b.statusSell = true;
                             s.statusSell = true;
+                            //atualiza nas tabelas dos clientes
+                            String n = this.newStock(b.client, b.stock.company, b.stock.qt, b.stock.transactionPrice, b.id);
+                            String m = this.newStock(s.client, s.stock.company, s.stock.qt, s.stock.transactionPrice, s.id);
                         }
                     }
                 }
@@ -290,7 +306,7 @@ public class NewWebService {
                 String status = "Incompleta";
                 if(sB.statusSell)
                     status = "Completa";   
-                s.add(sB.stock.company + " " + sB.stock.maxPrice + " " + sB.stock.transactionPrice + " " + sB.stock.getQntd() + " " +status);
+                s.add(sB.stock.company + " " + sB.stock.maxPrice + " " + sB.stock.transactionPrice + " " + sB.stock.getQt() + " " +status);
             }
         }
         return s;
@@ -311,7 +327,7 @@ public class NewWebService {
                 String status = "Incompleta";
                 if(sS.statusSell)
                     status = "Completa";                            
-                s.add(sS.stock.company + " " + sS.stock.minPrice + " " + sS.stock.transactionPrice + " " + sS.stock.getQntd() + " " +status);
+                s.add(sS.stock.company + " " + sS.stock.minPrice + " " + sS.stock.transactionPrice + " " + sS.stock.getQt() + " " +status);
             }
         }
         return s;
