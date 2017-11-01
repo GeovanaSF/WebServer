@@ -19,7 +19,7 @@ public class Stock implements Serializable {
     public double maxPrice;     //preço máximo de compra
     public Integer qntd;        //quantidaded do tipo Integer para utilizar método toString()
     public double transactionPrice; //preço com o qual a ação foi vendida ou comprada
-
+    public int qntd_T;          //quantidade que foi transacionada
     /**
      * Construtor da classe, seta qual a empresa a ação pertence, o preço mínino
      * de venda e a quantidade disponível.

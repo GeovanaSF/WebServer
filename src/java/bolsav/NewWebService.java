@@ -155,6 +155,8 @@ public class NewWebService {
             @WebParam(name = "qntd") int qntd, @WebParam(name = "minPrice") double minPrice, @WebParam(name = "id") int id) {
         //cria o objeto stock com os dados fornecidos
         Stock stock = new Stock(company, qntd, minPrice);
+        //verifica se a ação está na lista local de clientes
+        String s = newStock(client, company, qntd, minPrice, id);
         //verifica se a ação já estava na tabela de vendas
         //se já estava só atualiza quantidade e o preço mínimo de venda
         for (StockCli sc : sellers) {
@@ -251,7 +253,7 @@ public class NewWebService {
         //se existe apenas atualiza a quantidade e a disponibilidade de venda
         for (Stock scL : stocksLocal) {
             if (scL.company.equals(stock.company)) {
-                scL.setQt(scL.getQt() + stock.getQt());
+                scL.setQt(stock.getQt());
                 return;
             }
         }
@@ -311,8 +313,8 @@ public class NewWebService {
                         //se  preço atual é menor que o desejado pelo comprador
                         if (!b.client.equals(s.client) && b.stock.company.equals(s.stock.company)
                                 && sLocal.actualPrice >= s.stock.minPrice && sLocal.actualPrice <= b.stock.maxPrice) {
-                            //se a quantide da ação for menor do que a desejada transaciona o quanto ter
-                            if (b.stock.qt <= s.stock.qt) {
+                            //se a quantide da ação disponível for menor do que a desejada transaciona o quanto ter
+                            if (s.stock.qt <= b.stock.qt) {
                                 qtde1 = s.stock.qt;
                             } else {
                                 qtde1 = b.stock.qt;
@@ -321,9 +323,12 @@ public class NewWebService {
                             //que o comprador quer pagar
                             b.stock.transactionPrice = (sLocal.actualPrice + b.stock.maxPrice) / 2;
                             s.stock.setTransactionPrice(b.stock.transactionPrice);
-                            //atualiza a quantidade que foi transacionada nas listas
+                            //atualiza a quantidade resultante das ações
                             b.stock.setQt(qtde1);
                             s.stock.setQt(s.stock.qt - qtde1);
+                            //atualiza a quantidade que foi transacionada nas listas
+                            b.stock.qntd_T = qtde1;
+                            s.stock.qntd_T = qtde1;
                             //sinaliza que essas ações já foram vendidas ou compradas
                             b.statusSell = true;
                             s.statusSell = true;
@@ -359,7 +364,7 @@ public class NewWebService {
                     status = "Incompleta";
                 }
                 //adiciona na lista a string com os dados necessários para visualização
-                s.add(sB.stock.company + " " + sB.stock.maxPrice + " " + sB.stock.transactionPrice + " " + sB.stock.getQt() + " " + status);
+                s.add(sB.stock.company + " " + sB.stock.maxPrice + " " + sB.stock.transactionPrice + " " + sB.stock.qntd_T + " " + status);
             }
         }
         //retorna lista
@@ -388,7 +393,7 @@ public class NewWebService {
                     status = "Incompleta";
                 }
                 //adiciona na lista a string com os dados necessários para visualização
-                s.add(sS.stock.company + " " + sS.stock.minPrice + " " + sS.stock.transactionPrice + " " + sS.stock.getQt() + " " + status);
+                s.add(sS.stock.company + " " + sS.stock.minPrice + " " + sS.stock.transactionPrice + " " + sS.stock.qntd_T + " " + status);
             }
         }
         //retorna lista
