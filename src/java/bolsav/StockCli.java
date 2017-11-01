@@ -1,13 +1,10 @@
 package bolsav;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A classe StockCli relaciona uma ação com a interface de um cliente
  *
- * @author Davi Pereira Neto
  * @author Geovana Franco Santos
  */
 public class StockCli implements Serializable {
@@ -33,10 +30,8 @@ public class StockCli implements Serializable {
         this.statusSell = false;
     }
 
-    
-
     /**
-     * Retorna a ação
+     * Retorna a ação.
      *
      * @return do tipo Stock com a ação desejada
      */
@@ -45,7 +40,7 @@ public class StockCli implements Serializable {
     }
 
     /**
-     * Retorna a referência do cliente
+     * Retorna o nome do cliente
      *
      * @return do tipo String com o nome do cliente
      */
@@ -56,10 +51,9 @@ public class StockCli implements Serializable {
     /**
      * Retorna o id do cliente
      *
-     * @return do tipo long com o id do cliente
+     * @return do tipo int com o id do cliente
      */
     public int getId() {
         return id;
     }
-
 }
